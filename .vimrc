@@ -52,46 +52,6 @@ if (g:iswindows && g:isGUI)
     endfunction
 endif
  
-" -----------------------------------------------------------------------------
-"  < Linux Gvim/Vim 配置>
-" -----------------------------------------------------------------------------
-if g:islinux
-    set hlsearch        "高亮搜索
-    set incsearch       "在输入要搜索的文字时，实时匹配
- 
-    " Uncomment the following to have Vim jump to the last position when
-    " reopening a file
-    if has("autocmd")
-        au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-    endif
- 
-    if g:isGUI
-        " Source a global configuration file if available
-        if filereadable("/etc/vim/gvimrc.local")
-            source /etc/vim/gvimrc.local
-        endif
-    else
-        " This line should not be removed as it ensures that various options are
-        " properly set to work with the Vim-related packages available in Debian.
-        runtime! debian.vim
- 
-        " Vim5 and later versions support syntax highlighting. Uncommenting the next
-        " line enables syntax highlighting by default.
-        if has("syntax")
-            syntax on
-        endif
- 
-        set mouse=a                    " 在任何模式下启用鼠标
-        set t_Co=256                   " 在终端启用256色
-        set backspace=2                " 设置退格键可用
- 
-        " Source a global configuration file if available
-        if filereadable("/etc/vim/vimrc.local")
-            source /etc/vim/vimrc.local
-        endif
-    endif
-endif
-
 
 " -----------------------------------------------------------------------------
 "  < Vundle 插件管理工具配置 >
@@ -129,6 +89,7 @@ Bundle 'mattn/emmet-vim'
 Bundle 'Yggdroot/indentLine'
 Bundle 'scrooloose/nerdtree'
 Bundle 'Lokaltog/vim-powerline'
+Bundle 'bling/vim-bufferline'
 Bundle 'repeat.vim'
 Bundle 'wesleyche/SrcExpl'
 Bundle 'std_c.zip'
@@ -145,10 +106,13 @@ let g:pydiction_location = '~/.vim/bundle/pydiction/complete-dict'
 Bundle 'winmanager'
 "Bundle 'python_ifold'
 Bundle 'molokai'
+Bundle 'solarized'
 Bundle 'vimwiki'
 Bundle 'kevinw/pyflakes-vim'
 Bundle 'hdima/python-syntax'
 Bundle 'Valloric/YouCompleteMe'
+Bundle 'SirVer/ultisnips'
+Bundle 'honza/vim-snippets'
 
 
 
@@ -204,7 +168,14 @@ let g:ycm_filetype_blacklist = {
       \ 'tagbar' : 1,
       \ 'gitcommit' : 1,
       \}
-
+"===========================================
+"快速插入代码片段
+"===========================================
+let g:UltiSnipsExpandTrigger = '<C-Space>'
+let g:UltiSnipsJumpForwardTrigger = '<Down>'
+let g:UltiSnipsJumpBackwardTrigger = '<Up>'
+"定义存放代码片段的文件夹 .vim/snippets下，使用自定义和默认的，将会的到全局，有冲突的会提示
+let g:UltiSnipsSnippetDirectories=['bundle/vim-snippets', 'bundle/ultisnips']
 " ==========================================
 "  < indentLine 插件配置 >
 " ==========================================
@@ -234,9 +205,10 @@ let c_cpp_comments = 0
 " 常规模式下输入 tb 调用插件，如果有打开 TagList 窗口则先将其关闭
 "nmap tb :TlistClose<CR>:TagbarToggle<CR>
  
-let g:tagbar_width=10                       "设置窗口宽度
+let g:tagbar_width=15                       "设置窗口宽度
 let g:tagbar_left=1                         "在左侧窗口中显示
-
+"let g:winManagerWindowLayout = "BufExplorer,FileExplorer|TagList"
+"let g:winManagerWindowLayout = "Tagbar|TagList"
 " ===========================================
 "  < TagList 插件配置 >
 " ===========================================
@@ -247,10 +219,11 @@ let g:tagbar_left=1                         "在左侧窗口中显示
 "nmap tl :TagbarClose<CR>:Tlist<CR>
  
 let Tlist_Show_One_File=1                   "只显示当前文件的tags
-" let Tlist_Enable_Fold_Column=0              "使taglist插件不显示左边的折叠行
+let Tlist_Show_Menu=1                       "显示菜单
+let Tlist_Enable_Fold_Column=0              "使taglist插件不显示左边的折叠行
 let Tlist_Exit_OnlyWindow=1                 "如果Taglist窗口是最后一个窗口则退出Vim
 let Tlist_File_Fold_Auto_Close=1            "自动折叠
-let Tlist_WinWidth=30                       "设置窗口宽度
+let Tlist_WinWidth=20                       "设置窗口宽度
 let Tlist_Use_Right_Window=1                "在右侧窗口中显示
 " ===========================================
 "  < txtbrowser 插件配置 >
@@ -261,6 +234,9 @@ au BufRead,BufNewFile *.txt setlocal ft=txt
 """"""""""""""""""""""""""""""
 " BufExplorer
 """"""""""""""""""""""""""""""
+"<Leader>be　　全屏方式打来 buffer 列表
+"<Leader>bs　　水平窗口打来 buffer 列表
+"<Leader>bv　　垂直窗口打开 buffer 列表
 "let g:bufExplorerDefaultHelp=0       " Do not show default help.
 "let g:bufExplorerShowRelativePath=1  " Show relative paths.
 "let g:bufExplorerSortBy='mru'        " Sort by most recently used.
@@ -348,31 +324,18 @@ let g:NERDTreeMapOpenVSplit = 'v'
 " =========================================
 
 " python fly check, 弥补syntastic只能打开和保存才检查语法的不足
-let g:pyflakes_use_quickfix = 0
+let g:pyflakes_use_quickfix = 1
 
 " for python.vim syntax highlight
 let python_highlight_all = 1
 
- 
-"==========================================
-" FileEncode Settings 文件编码,格式
-"==========================================
-" 设置新文件的编码为 UTF-8
-set encoding=utf-8
-" 自动判断编码时，依次尝试以下编码：
-set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,latin1
-set helplang=cn
-"set langmenu=zh_CN.UTF-8
-"set enc=2byte-gb18030
-" 下面这句只影响普通模式 (非图形界面) 下的 Vim。
-set termencoding=utf-8
 
-" Use Unix as the standard file type
-set ffs=unix,dos,mac
 
-" 如遇Unicode值大于255的文本，不必等到空格再折行。
-set formatoptions+=m
+
+
+
  
+
 " ========================================
 "  General Settings 基础设置
 " ========================================
@@ -380,57 +343,77 @@ set formatoptions+=m
 let mapleader = ','
 let g:mapleader = ','
 
-"set mouse=a                    "在任何模式下启用鼠标
-"set t_Co=256                   "在终端启用256色
-
 filetype on                    "启用文件类型侦测
 filetype plugin on             "针对不同的文件类型加载对应的插件
 filetype plugin indent on      "启用缩进
-"set backspace=2                "设置退格键可用
+syntax on                      "代码高亮
+"colorscheme molokai            "终端配色方案
+colorscheme solarized            "终端配色方案
+"let g:solarized_termcolors=256
+"let g:solarized_termtrans=1
+"let g:solarized_contrast='normal'
+"let g:solarized_visibility='normal'
+"let g:molokai_original = 1
+"set background=dark
+set t_Co=256
+set mouse=a                    "任何模式下启用鼠标
+set mousehide                  "Hide the mouse cursor while typing
+scriptencoding utf-8
 
-set guitablabel=%N\ %f
-set autoindent                 "打开自动缩进
-set smartindent                "启用智能对齐方式
-set shiftround                 "缩进时，取整
-"set showtabline=1              "显示标签
-set expandtab                  "将Tab键转换为空格
-set tabstop=4                  "设置Tab键的宽度，可以更改，如：宽度为2
-set shiftwidth=4               "换行时自动缩进宽度，可更改（宽度同tabstop）
-set smarttab                   "指定按一次backspace就删除shiftwidth宽度
-
-set foldenable                 "启用折叠
-set foldmethod=indent          "indent 折叠方式
-" 代码折叠自定义快捷键
-let g:FoldMethod = 0
-fun! ToggleFold()
-    if g:FoldMethod == 0
-        exe "normal! zM"
-        let g:FoldMethod = 1
-    else
-        exe "normal! zR"
-        let g:FoldMethod = 0
+if has('clipboard')
+    if has('unnamedplus')  " When possible use + register for copy-paste
+		set clipboard=unnamed,unnamedplus
+    else         " On mac and Windows, use * register for copy-paste
+		set clipboard=unnamed
     endif
-endfun
-"set hlsearch                   "高亮搜索
-"set incsearch                  "在输入要搜索的文字时，实时匹配
-set showmatch                  "高亮显示匹配的括号 
-set matchtime=5                "匹配括号高亮的时间（单位是十分之一秒）
-set ignorecase                 "搜索模式里忽略大小写
-set smartcase                  "如果搜索模式包含大写字符，不使用'ignorecase' 选项，只有在输入搜索模式并且打开 'ignorecase' 选项时才会使用
-set autoread                   "当文件在外部被修改，自动更新该文件
-set autowrite                  "自动保存
-set nobackup                   "设置无备份文件
-" set noswapfile               "设置无临时文件
-set vb t_vb=                   "关闭提示音
- 
-" 启用每行超过80列的字符提示（字体变蓝并加下划线），不启用就注释掉
-au BufWinEnter * let w:m2=matchadd('Underlined', '\%>' . 80 . 'v.\+', -1)
- 
-" ===============================
-"       < 界面配置 >
-" ===============================
+endif
+
+set shortmess+=filmnrxoOtT          "去掉欢迎界面
+set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
+set virtualedit=onemore             " Allow for cursor beyond last character
+set history=1000                    " Store a ton of history (default is 20)
+"set spell                           "启用拼写检查
+set hidden                          " Allow buffer switching without saving
+set iskeyword-=.                    " '.' is an end of word designator
+set iskeyword-=#                    " '#' is an end of word designator
+set iskeyword-=-                    " '-' is an end of word designator
+
+set backup                          "设置备份文件
+"if has('persistent_undo')
+"    set undofile                " So is persistent undo ...
+"    set undolevels=1000         " Maximum number of changes that can be undone
+"    set undoreload=10000        " Maximum number lines to save for undo on a buffer reload
+"endif
+
+set tabpagemax=15               " Only show 15 tabs
+set showmode                    " Display the current mode
+
+set cursorline                  "高亮光标所在行
+set cuc                         "高亮光标所在列
+
+highlight clear SignColumn      " SignColumn should match background
+highlight clear LineNr          " Current line number row will have same background color in relative mode
+"highlight clear CursorLineNr    " Remove highlight color from current line number
+
+"if has('cmdline_info')
+"    set ruler                   " Show the ruler
+"    set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " A ruler on steroids
+"    set showcmd                 " Show partial commands in status line and
+                                    " Selected characters/lines in visual mode
+"endif
+
+"if has('statusline')
+    set laststatus=2                         "启用状态栏信息
+"    set statusline=%<%f\                     " Filename
+"    set statusline+=%w%h%m%r                 " Options
+"    set statusline+=\ [%{&ff}/%Y]            " Filetype
+"    set statusline+=\ [%{getcwd()}]          " Current dir
+"    set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
+"endif
+
+set backspace=indent,eol,start  " Backspace for dummies
+set linespace=0                 " No extra spaces between rows
 set number                      "显示行号
-"set ruler
 set relativenumber number       "设置相对行号
 au FocusLost * :set norelativenumber number
 au FocusGained * :set relativenumber
@@ -444,17 +427,83 @@ function! NumberToggle()
         set relativenumber
     endif
 endfunc
-
-set laststatus=2                  "启用状态栏信息
-set cursorline
-"set cul                           "高亮光标所在行
-set cuc                           "高亮光标所在列
-set wrap                        "设置不自动换行
-set shortmess=atI                 "去掉欢迎界面
-set guifont=Monospace\ 12
 set scrolloff=10                  "在上下移动光标时，光标的上方或下方至少会保留显示的行数
-colorscheme molokai               "终端配色方案
+set showmatch                   "高亮显示匹配的括号
+set incsearch                   "在输入要搜索的文字时，实时匹配
+set hlsearch                    "高亮搜索
+"set winminheight=0              " Windows can be 0 line high
+set ignorecase                  "搜索模式里忽略大小写
+set smartcase                   "如果搜索模式包含大写字符，不使用'ignorecase' 选项，只有在输入搜索模式并且打开 'ignorecase' 选项时才会使用
+set wildmenu
+" 增强模式中的命令行自动完成操作
+set wildmode=list:longest,full  " Command <Tab> completion, list matches, then longest common part, then all.
+set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
+"让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
+set completeopt=longest,menu
+set wildignore=*.o,*~,*.pyc,*.class
+"set scrolljump=5                " Lines to scroll when cursor leaves screen
+"set scrolloff=3                 " Minimum lines to keep above and below cursor
+set foldenable                  "启用折叠
+set list
+set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
 set showcmd                       "在状态栏显示正在输入的命令
+
+set nowrap                      "设置不自动换行
+set autoindent                  "打开自动缩进
+set shiftwidth=4                "换行时自动缩进宽度，可更改（宽度同tabstop）
+set expandtab                   "将Tab键转换为空格
+set tabstop=4                   "设置Tab键的宽度，可以更改，如：宽度为2
+"set softtabstop=4               " Let backspace delete indent
+"set nojoinspaces                " Prevents inserting two spaces after punctuation on a join (J)
+"set splitright                  " Puts new vsplit windows to the right of the current
+"set splitbelow                  " Puts new split windows to the bottom of the current
+"set pastetoggle=<F12>           " pastetoggle (sane indentation on pastes)
+"autocmd BufNewFile,BufRead *.html.twig set filetype=html.twig
+"autocmd FileType haskell,puppet,ruby,yml setlocal expandtab shiftwidth=2 softtabstop=2
+"autocmd BufNewFile,BufRead *.coffee set filetype=coffee
+
+"autocmd FileType haskell setlocal commentstring=--\ %s
+"autocmd FileType haskell,rust setlocal nospell
+
+let g:FoldMethod = 0
+fun! ToggleFold()
+    if g:FoldMethod == 0
+        exe "normal! zM"
+        let g:FoldMethod = 1
+    else
+        exe "normal! zR"
+        let g:FoldMethod = 0
+    endif
+endfun
+
+function! ToggleBG()
+    let s:tbg = &background
+    " Inversion
+    if s:tbg == "dark"
+        set background=light
+    else
+        set background=dark
+    endif
+endfunction
+
+
+"set smartindent                "启用智能对齐方式
+"set shiftround                 "缩进时，取整
+"set showtabline=1              "显示标签
+set smarttab                   "指定按一次backspace就删除shiftwidth宽度
+"set foldmethod=indent          "indent 折叠方式
+" 代码折叠自定义快捷键    
+"set matchtime=5                "匹配括号高亮的时间（单位是十分之一秒）
+"set autoread                   "当文件在外部被修改，自动更新该文件
+"set autowrite                  "自动保存
+set vb t_vb=                   "关闭提示音
+ 
+" 启用每行超过80列的字符提示（字体变蓝并加下划线），不启用就注释掉
+"au BufWinEnter * let w:m2=matchadd('Underlined', '\%>' . 80 . 'v.\+', -1)
+ 
+" ===============================
+"       < 界面配置 >
+" ===============================
 
 " 显示/隐藏菜单栏、工具栏、滚动条，可用 Ctrl + F11 切换
 if has("gui_running")
@@ -484,23 +533,15 @@ endif
 "==========================================
 autocmd! bufwritepost _vimrc source % " vimrc文件修改之后自动加载。 windows。
 autocmd! bufwritepost .vimrc source % " vimrc文件修改之后自动加载。 linux。
-" 自动补全配置
-"让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
-set completeopt=longest,menu
-
-" 增强模式中的命令行自动完成操作
-set wildmenu
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc,*.class
 
 "离开插入模式后自动关闭预览窗口
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 "回车即选中当前项
 inoremap <expr> <CR>     pumvisible() ? "\<C-y>" : "\<CR>"
 
-"if has("autocmd")
-"  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-"endif
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
 
 " Python 文件的一般设置，比如不要 tab 等
 "autocmd FileType python set tabstop=4 shiftwidth=4 expandtab ai
@@ -883,7 +924,7 @@ vmap ;; <Esc>
 nmap <C-Z> <Esc>u
 map! <C-O> <C-Y>,
 map <C-A> ggVG$"+y
-map <F12> gg=G
+"map <F12> gg=G
 
 if has("gui_running")
     vmap <C-c> "+y
@@ -926,12 +967,21 @@ nmap tb :TlistClose<CR>:TagbarToggle<CR>
 " 常规模式下输入 tl 调用插件，如果有打开 Tagbar 窗口则先将其关闭
 nmap tl :TagbarClose<CR>:Tlist<CR>
 
+nmap b1 :b1<CR>
+nmap b2 :b2<CR>
+nmap b3 :b3<CR>
+nmap b4 :b4<CR>
+nmap b5 :b5<CR>
+nmap b6 :b6<CR>
+nmap b7 :b7<CR>
+nmap b8 :b8<CR>
+nmap b9 :b9<CR>
 "C，C++ 按F5编译运行
 map <F5> :call Run()<CR>
 map <F8> :call RunPython()<CR>
 
 "代码格式优化化
-map <F6> :call FormartSrc()<CR><CR>
+map <F6> :call FormartSrc()<CR>
 noremap <F1> <Esc> "废弃F1键以防调出系统帮助
 map <leader>zz :call ToggleFold()<cr>     "代码折叠快捷键
 nnoremap <C-n> :call NumberToggle()<cr>   "显示/关闭相对行号
@@ -939,3 +989,6 @@ nnoremap <C-n> :call NumberToggle()<cr>   "显示/关闭相对行号
 noremap <silent><leader>/ :nohls<CR>
 "鼠标粘贴
 noremap <silent><leader>vb :set mouse=v<CR>
+"切换背景
+noremap <leader>bg :call ToggleBG()<CR>
+"<C-Space>代码片段补全
