@@ -106,7 +106,7 @@ let g:pydiction_location = '~/.vim/bundle/pydiction/complete-dict'
 Bundle 'winmanager'
 "Bundle 'python_ifold'
 Bundle 'molokai'
-Bundle 'solarized'
+Bundle 'altercation/vim-colors-solarized'
 Bundle 'vimwiki'
 Bundle 'kevinw/pyflakes-vim'
 Bundle 'hdima/python-syntax'
@@ -347,15 +347,15 @@ filetype on                    "启用文件类型侦测
 filetype plugin on             "针对不同的文件类型加载对应的插件
 filetype plugin indent on      "启用缩进
 syntax on                      "代码高亮
-"colorscheme molokai            "终端配色方案
-colorscheme solarized            "终端配色方案
+set t_Co=256
+colorscheme molokai            "终端配色方案
+"colorscheme solarized            "终端配色方案
 "let g:solarized_termcolors=256
 "let g:solarized_termtrans=1
 "let g:solarized_contrast='normal'
 "let g:solarized_visibility='normal'
 "let g:molokai_original = 1
 "set background=dark
-set t_Co=256
 set mouse=a                    "任何模式下启用鼠标
 set mousehide                  "Hide the mouse cursor while typing
 scriptencoding utf-8
@@ -991,4 +991,6 @@ noremap <silent><leader>/ :nohls<CR>
 noremap <silent><leader>vb :set mouse=v<CR>
 "切换背景
 noremap <leader>bg :call ToggleBG()<CR>
+"粘贴快捷键
+set pastetoggle=<F12>
 "<C-Space>代码片段补全
