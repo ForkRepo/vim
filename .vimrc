@@ -84,25 +84,25 @@ Bundle 'a.vim'
 Bundle 'Align'
 Bundle 'jiangmiao/auto-pairs'
 Bundle 'bufexplorer.zip'
-Bundle 'cSyntaxAfter'
 Bundle 'mattn/emmet-vim'
 Bundle 'Yggdroot/indentLine'
 Bundle 'scrooloose/nerdtree'
+Bundle 'scrooloose/nerdcommenter'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'bling/vim-bufferline'
+Bundle 'kien/ctrlp.vim'
+Bundle 'tacahiroy/ctrlp-funky'
 Bundle 'repeat.vim'
 Bundle 'wesleyche/SrcExpl'
-Bundle 'std_c.zip'
 Bundle 'scrooloose/syntastic'
 Bundle 'majutsushi/tagbar'
 Bundle 'taglist.vim'
-Bundle 'TxtBrowser'
-Bundle 'ZoomWin'
+"Bundle 'TxtBrowser'
 Bundle 'cscope.vim'
 Bundle 'ctags.vim'
+Bundle 'Lokaltog/vim-easymotion'
 "Bundle 'c.vim'
-Bundle 'pydiction'
-let g:pydiction_location = '~/.vim/bundle/pydiction/complete-dict'
+Bundle 'hallison/vim-markdown'
 Bundle 'winmanager'
 "Bundle 'python_ifold'
 Bundle 'molokai'
@@ -113,7 +113,6 @@ Bundle 'hdima/python-syntax'
 Bundle 'Valloric/YouCompleteMe'
 Bundle 'SirVer/ultisnips'
 Bundle 'honza/vim-snippets'
-
 
 
 "=======================================================================
@@ -161,6 +160,11 @@ if !empty(glob("~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_
     let g:ycm_global_ycm_extra_conf = "~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
 endif
 
+" YCM 补全菜单配色
+" 菜单
+"highlight Pmenu ctermfg=2 ctermbg=3 guifg=#005f87 guibg=#EEE8D5
+" 选中项
+"highlight PmenuSel ctermfg=2 ctermbg=3 guifg=#AFD700 guibg=#106900
 " 直接触发自动补全 insert模式下
 " let g:ycm_key_invoke_completion = '<C-Space>'
 " 黑名单,不启用
@@ -171,11 +175,37 @@ let g:ycm_filetype_blacklist = {
 "===========================================
 "快速插入代码片段
 "===========================================
-let g:UltiSnipsExpandTrigger = '<C-Space>'
-let g:UltiSnipsJumpForwardTrigger = '<Down>'
-let g:UltiSnipsJumpBackwardTrigger = '<Up>'
+"let g:UltiSnipsExpandTrigger = '<C-space>'
+"let g:UltiSnipsJumpForwardTrigger = '<Down>'
+"let g:UltiSnipsJumpBackwardTrigger = '<Up>'
 "定义存放代码片段的文件夹 .vim/snippets下，使用自定义和默认的，将会的到全局，有冲突的会提示
 let g:UltiSnipsSnippetDirectories=['bundle/vim-snippets', 'bundle/ultisnips']
+
+function! g:UltiSnips_Complete()
+    call UltiSnips#ExpandSnippet()
+    if g:ulti_expand_res == 0
+        if pumvisible()
+            return "\<Down>"
+        else
+            call UltiSnips#JumpForwards()
+            if g:ulti_jump_forwards_res == 0
+               return "\<TAB>"
+            endif
+        endif
+    endif
+    return ""
+endfunction
+
+au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsListSnippets="<c-e>"
+"回车即选中当前项
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+if has('conceal')
+    set conceallevel=2 concealcursor=i
+endif
+
+
 " ==========================================
 "  < indentLine 插件配置 >
 " ==========================================
@@ -185,17 +215,36 @@ let g:UltiSnipsSnippetDirectories=['bundle/vim-snippets', 'bundle/ultisnips']
 
 let g:indentLine_char = "┊"
 let g:indentLine_first_char = "┊"
- 
+" 色块宽度
+"let g:indent_guides_guide_size=1
 " 设置终端对齐线颜色，如果不喜欢可以将其注释掉采用默认颜色
-let g:indentLine_color_term = 239
+let g:indentLine_color_term = 256
 
 " ==========================================
-"  < std_c 插件配置 >
+"    markdown
 " ==========================================
-" 用于增强C语法高亮
- 
-" 启用 // 注视风格
-let c_cpp_comments = 0
+au BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn} set filetype=mkd
+let g:vim_markdown_folding_disabled=1
+let g:vim_markdown_no_default_key_mappings=1
+" ==========================================
+" ctrlp
+" =========================================
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_custom_ignore = {
+    \ 'dir':  '\.git$\|\.hg$\|\.svn$',
+    \ 'file': '\.exe$\|\.so$\|\.dll$\|\.pyc$' }
+let g:ctrlp_working_path_mode=0
+let g:ctrlp_match_window_bottom=1
+let g:ctrlp_max_height=15
+let g:ctrlp_match_window_reversed=0
+let g:ctrlp_mruf_max=500
+let g:ctrlp_follow_symlinks=1
+
+" ==========================================
+" ctrlp-funky
+" ==========================================
+let g:ctrlp_extensions = ['funky']
+let g:ctrlp_funky_syntax_highlight = 1
 
 " ==========================================
 "  < Tagbar 插件配置 >
@@ -205,10 +254,11 @@ let c_cpp_comments = 0
 " 常规模式下输入 tb 调用插件，如果有打开 TagList 窗口则先将其关闭
 "nmap tb :TlistClose<CR>:TagbarToggle<CR>
  
-let g:tagbar_width=15                       "设置窗口宽度
+let g:tagbar_width=20                       "设置窗口宽度
 let g:tagbar_left=1                         "在左侧窗口中显示
-"let g:winManagerWindowLayout = "BufExplorer,FileExplorer|TagList"
-"let g:winManagerWindowLayout = "Tagbar|TagList"
+let g:tagbar_compact=1                      "不显示帮助信息
+"let g:winManagerWindowLayout = "BufExplorer,FileExplorer|Tagbar"
+"let g:winManagerWindowLayout = "TagList|Tagbar"
 " ===========================================
 "  < TagList 插件配置 >
 " ===========================================
@@ -225,11 +275,18 @@ let Tlist_Exit_OnlyWindow=1                 "如果Taglist窗口是最后一个�
 let Tlist_File_Fold_Auto_Close=1            "自动折叠
 let Tlist_WinWidth=20                       "设置窗口宽度
 let Tlist_Use_Right_Window=1                "在右侧窗口中显示
+
+" ===========================================
+"          nerdcommenter
+" ===========================================
+" <leader>cc，注释当前选中文本，如果选中的是整行则在每行首添加 //，如果选中一行的部分内容则在选中部分前后添加分别 / 、 /；
+"<leader>cu，取消选中文本块的注释
+"
 " ===========================================
 "  < txtbrowser 插件配置 >
 " ===========================================
 " 用于文本文件生成标签与与语法高亮（调用TagList插件生成标签，如果可以）
-au BufRead,BufNewFile *.txt setlocal ft=txt
+"au BufRead,BufNewFile *.txt setlocal ft=txt
 
 """"""""""""""""""""""""""""""
 " BufExplorer
@@ -340,22 +397,24 @@ let python_highlight_all = 1
 "  General Settings 基础设置
 " ========================================
 " 修改leader键
-let mapleader = ','
-let g:mapleader = ','
+let mapleader = '\'
+let g:mapleader = '\'
 
 filetype on                    "启用文件类型侦测
 filetype plugin on             "针对不同的文件类型加载对应的插件
 filetype plugin indent on      "启用缩进
-syntax on                      "代码高亮
+"syntax on                      "代码高亮
 set t_Co=256
+syntax enable
+set background=dark
+let g:solarized_termcolors=256  "这个必须在前
+let g:molokai_original = 1
 colorscheme molokai            "终端配色方案
 "colorscheme solarized            "终端配色方案
 "let g:solarized_termcolors=256
 "let g:solarized_termtrans=1
 "let g:solarized_contrast='normal'
 "let g:solarized_visibility='normal'
-"let g:molokai_original = 1
-"set background=dark
 set mouse=a                    "任何模式下启用鼠标
 set mousehide                  "Hide the mouse cursor while typing
 scriptencoding utf-8
@@ -378,7 +437,7 @@ set iskeyword-=.                    " '.' is an end of word designator
 set iskeyword-=#                    " '#' is an end of word designator
 set iskeyword-=-                    " '-' is an end of word designator
 
-set backup                          "设置备份文件
+"set backup                          "设置备份文件
 "if has('persistent_undo')
 "    set undofile                " So is persistent undo ...
 "    set undolevels=1000         " Maximum number of changes that can be undone
@@ -492,7 +551,9 @@ endfunction
 "set showtabline=1              "显示标签
 set smarttab                   "指定按一次backspace就删除shiftwidth宽度
 "set foldmethod=indent          "indent 折叠方式
-" 代码折叠自定义快捷键    
+set foldmethod=syntax
+" 启动 vim 时关闭折叠代码
+set nofoldenable
 "set matchtime=5                "匹配括号高亮的时间（单位是十分之一秒）
 "set autoread                   "当文件在外部被修改，自动更新该文件
 "set autowrite                  "自动保存
@@ -536,8 +597,6 @@ autocmd! bufwritepost .vimrc source % " vimrc文件修改之后自动加载。 l
 
 "离开插入模式后自动关闭预览窗口
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-"回车即选中当前项
-inoremap <expr> <CR>     pumvisible() ? "\<C-y>" : "\<CR>"
 
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -922,7 +981,7 @@ nmap ;; <Esc>
 vmap ;; <Esc>
 
 nmap <C-Z> <Esc>u
-map! <C-O> <C-Y>,
+"map! <C-O> <C-Y>,
 map <C-A> ggVG$"+y
 "map <F12> gg=G
 
@@ -963,10 +1022,11 @@ nmap <F3> :SrcExplToggle<CR>                "打开/闭浏览窗口
 
 " 常规模式下输入 tb 调用插件，如果有打开 TagList 窗口则先将其关闭
 nmap tb :TlistClose<CR>:TagbarToggle<CR>
+"nmap tb :TagbarToggle<CR>
 
 " 常规模式下输入 tl 调用插件，如果有打开 Tagbar 窗口则先将其关闭
 nmap tl :TagbarClose<CR>:Tlist<CR>
-
+"切换buffer
 nmap b1 :b1<CR>
 nmap b2 :b2<CR>
 nmap b3 :b3<CR>
@@ -991,6 +1051,20 @@ noremap <silent><leader>/ :nohls<CR>
 noremap <silent><leader>vb :set mouse=v<CR>
 "切换背景
 noremap <leader>bg :call ToggleBG()<CR>
+"CtrlPFunky快捷键
+nnoremap <Leader>fu :CtrlPFunky<Cr>
+" narrow the list down with a word under cursor
+nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
+"ctrlpwen文件模糊查找快捷键 ctrl+p
+nnoremap <silent> <D-t> :CtrlP<CR>
+nnoremap <silent> <D-r> :CtrlPMRU<CR>
 "粘贴快捷键
 set pastetoggle=<F12>
-"<C-Space>代码片段补全
+"<C-y>,  emmet快捷键
+"<leader><leader>fa 快速移动
+"<leader>cc，注释当前选中文本，如果选中的是整行则在每行首添加 //，如果选中一行的部分内容则在选中部分前后添加分别 / 、 /；
+"<leader>cu，取消选中文本块的注释
+"
+"<Leader>be　　全屏方式打来 buffer 列表
+"<Leader>bs　　水平窗口打来 buffer 列表
+"<Leader>bv　　垂直窗口打开 buffer 列表
