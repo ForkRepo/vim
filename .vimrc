@@ -113,11 +113,20 @@ Bundle 'hdima/python-syntax'
 Bundle 'Valloric/YouCompleteMe'
 Bundle 'SirVer/ultisnips'
 Bundle 'honza/vim-snippets'
+Bundle 'ap/vim-css-color'
+Bundle 'jelera/vim-javascript-syntax'
+Bundle "pangloss/vim-javascript"
 
+" ==========================================
+" javascript插件设置
+" ==========================================
+let g:html_indent_inctags = "html,body,head,tbody"
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
 
-"=======================================================================
+"===========================================
 "syntastic设置
-"=======================================================================
+"===========================================
 let g:syntastic_error_symbol='>>'
 let g:syntastic_warning_symbol='>'
 let g:syntastic_check_on_open=1
@@ -125,8 +134,15 @@ let g:syntastic_check_on_wq=0
 let g:syntastic_enable_highlighting=1
 "let g:syntastic_python_checkers=['pyflakes'] " 使用pyflakes
 " error code: http://pep8.readthedocs.org/en/latest/intro.html#error-codes
-let g:syntastic_python_checkers=['pyflakes', 'pep8'] " 使用pyflakes
-let g:syntastic_python_pep8_args='--ignore=E501,E225'
+"let g:syntastic_python_checkers=['pyflakes', 'pep8'] " 使用pyflakes
+"let g:syntastic_python_pep8_args='--ignore=E501,E225'
+let g:syntastic_python_checkers=['pyflakes', 'pylint']
+let g:syntastic_python_checkers=['pylint']
+let g:syntastic_python_pylint_args='--disable=C0111,R0903,C0301'
+
+
+let g:syntastic_javascript_checkers = ['jsl', 'jshint']
+let g:syntastic_html_checkers=['tidy', 'jshint']
 
 " 修改高亮的背景色, 适应主题
 highlight SyntasticErrorSign guifg=white guibg=black
@@ -397,8 +413,8 @@ let python_highlight_all = 1
 "  General Settings 基础设置
 " ========================================
 " 修改leader键
-let mapleader = '\'
-let g:mapleader = '\'
+let mapleader = ','
+let g:mapleader = ','
 
 filetype on                    "启用文件类型侦测
 filetype plugin on             "针对不同的文件类型加载对应的插件
@@ -552,6 +568,7 @@ endfunction
 set smarttab                   "指定按一次backspace就删除shiftwidth宽度
 "set foldmethod=indent          "indent 折叠方式
 set foldmethod=syntax
+"set foldmethod=marker
 " 启动 vim 时关闭折叠代码
 set nofoldenable
 "set matchtime=5                "匹配括号高亮的时间（单位是十分之一秒）
