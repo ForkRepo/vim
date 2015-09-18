@@ -165,6 +165,7 @@ let g:ycm_use_ultisnips_completer = 1 "提示UltiSnips
 let g:ycm_collect_identifiers_from_comments_and_strings = 1   "注释和字符串中的文字也会被收入补全
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax=1   "语言关键字补全, 不过python关键字都很短，所以，需要的自己打开
+let g:ycm_cache_omnifunc=0 " 禁止缓存匹配项,每次都重新生成匹配项
 
 " 跳转到定义处, 分屏打开
 let g:ycm_goto_buffer_command = 'horizontal-split'
@@ -273,7 +274,7 @@ let g:ctrlp_funky_syntax_highlight = 1
 let g:tagbar_width=20                       "设置窗口宽度
 let g:tagbar_left=1                         "在左侧窗口中显示
 let g:tagbar_compact=1                      "不显示帮助信息
-"let g:winManagerWindowLayout = "BufExplorer,FileExplorer|Tagbar"
+let g:winManagerWindowLayout = "TagList|FileExplorer,BufExplorer"
 "let g:winManagerWindowLayout = "TagList|Tagbar"
 " ===========================================
 "  < TagList 插件配置 >
@@ -419,14 +420,18 @@ let g:mapleader = ','
 filetype on                    "启用文件类型侦测
 filetype plugin on             "针对不同的文件类型加载对应的插件
 filetype plugin indent on      "启用缩进
-"syntax on                      "代码高亮
+syntax on                      "代码高亮
+"syntax enable
 set t_Co=256
-syntax enable
 set background=dark
-let g:solarized_termcolors=256  "这个必须在前
-let g:molokai_original = 1
-colorscheme molokai            "终端配色方案
-"colorscheme solarized            "终端配色方案
+if has("gui_running")
+    let g:solarized_termcolors=256  "这个必须在前
+    colorscheme solarized           "终端配色方案
+else
+    let g:molokai_original = 1
+    colorscheme molokai            "终端配色方案
+endif
+"colorscheme solarized           "终端配色方案
 "let g:solarized_termcolors=256
 "let g:solarized_termtrans=1
 "let g:solarized_contrast='normal'
@@ -444,6 +449,7 @@ if has('clipboard')
 endif
 
 set shortmess+=filmnrxoOtT          "去掉欢迎界面
+set guifont=Monospace\ 12
 set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
 set virtualedit=onemore             " Allow for cursor beyond last character
 set history=1000                    " Store a ton of history (default is 20)
@@ -1001,13 +1007,9 @@ nmap <C-Z> <Esc>u
 "map! <C-O> <C-Y>,
 map <C-A> ggVG$"+y
 "map <F12> gg=G
+vmap <leader>y "+y
+nmap <leader>p "+p
 
-if has("gui_running")
-    vmap <C-c> "+y
-    vmap <C-v> c<ESC>"+p
-    imap <C-v> <C-r><C-o>+
-    nmap <C-v> "+p
-endif
 " 选中状态下 Ctrl+c 复制
 "map <C-v> "*pa
 "imap <C-v> <Esc>"*pa
