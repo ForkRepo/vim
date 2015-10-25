@@ -52,7 +52,7 @@
     endif
 " }
 
-" bundleEnvironment {
+" BundleEnvironment {
 
     " Basics {
         set nocompatible        " Must be first line
@@ -111,14 +111,10 @@
         Bundle 'dyng/ctrlsf.vim'   
     " }
 
-    " In your .vimrc.before.local file
-    " list only the plugin groups you will use
     if !exists('g:bundle_groups')
         let g:bundle_groups=['general', 'writing', 'youcompleteme', 'programming', 'php', 'ruby', 'python', 'javascript', 'html', 'misc',]
     endif
 
-    " To override all the included bundles, add the following to your
-    " .vimrc.bundles.local file:
     "   let g:override_bundles = 1
     if !exists("g:override_bundles")
 
@@ -150,9 +146,9 @@
             Bundle 'flazz/vim-colorschemes'
             Bundle 'mbbill/undotree'
             Bundle 'Yggdroot/indentLine'
-            if !exists('g:no_views')
-                Bundle 'vim-scripts/restore_view.vim'
-            endif
+            "if !exists('g:no_views')
+                "Bundle 'vim-scripts/restore_view.vim'
+            "endif
             Bundle 'mhinz/vim-signify'
             Bundle 'tpope/vim-abolish.git'
             Bundle 'osyo-manga/vim-over'
@@ -210,6 +206,8 @@
             Bundle 'yssource/python.vim'
             Bundle 'python_match.vim'
             Bundle 'pythoncomplete'
+            "Bundle 'hdima/python-syntax'
+"            Bundle 'kevinw/pyflakes-vim'
         endif
     " }
 
@@ -322,7 +320,8 @@
         " Use the powerline theme and optionally enable powerline symbols.
         " To use the symbols , , , , , , and .in the statusline
         " segments add the following to your .vimrc.before.local file:
-        "   let g:airline_powerline_fonts=1
+        let g:airline_powerline_fonts=1
+        " let g:airline#extensions#tabline#enabled = 1
         " If the previous symbols do not render for you then install a
         " powerline enabled font.
 
@@ -330,13 +329,13 @@
         " Default in terminal vim is 'dark'
         if isdirectory(expand("~/.vim/bundle/vim-airline/"))
             if !exists('g:airline_theme')
-                let g:airline_theme = 'molokai'
+                let g:airline_theme = 'dark'
             endif
-            if !exists('g:airline_powerline_fonts')
-                " Use the default set of separators with a few customizations
-                let g:airline_left_sep='›'  " Slightly fancier than '>'
-                let g:airline_right_sep='‹' " Slightly fancier than '<'
-            endif
+"            if !exists('g:airline_powerline_fonts')
+                "" Use the default set of separators with a few customizations
+                "let g:airline_left_sep=''  " Slightly fancier than '>'
+                "let g:airline_right_sep='' " Slightly fancier than '<'
+            "endif
         endif
     " }
 " }
@@ -347,13 +346,12 @@
         let g:syntastic_check_on_open=1
         let g:syntastic_check_on_wq=0
         let g:syntastic_enable_highlighting=1
+        let g:syntastic_ignore_files=[".*\.py$"]
         "let g:syntastic_python_checkers=['pyflakes'] " 使用pyflakes
-        " error code: http://pep8.readthedocs.org/en/latest/intro.html#error-codes
-        "let g:syntastic_python_checkers=['pyflakes', 'pep8'] " 使用pyflakes
         "let g:syntastic_python_pep8_args='--ignore=E501,E225'
-        let g:syntastic_python_checkers=['pyflakes', 'pylint']
-        let g:syntastic_python_checkers=['pylint']
-        let g:syntastic_python_pylint_args='--disable=C0111,R0903,C0301'
+        "let g:syntastic_python_checkers=['pyflakes']
+        "let g:syntastic_python_checkers=['pylint']
+        " let g:syntastic_python_pylint_args='--disable=C0111,R0903,C0301'
 
 
         let g:syntastic_javascript_checkers = ['jsl', 'jshint']
@@ -403,13 +401,13 @@
             "set completeopt-=preview
 
 
-            autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-            autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-            autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-            autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-            autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-            autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
-            autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+            "autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+            "autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+            "autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+            "autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+            "autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+            "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+            "autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
     " }
     " ultisnips {
         "let g:UltiSnipsExpandTrigger = '<C-space>'
@@ -456,16 +454,41 @@
     " }
     " tagbar {
 
-        if isdirectory(expand("~/.vim/bundle/tagbar/"))
+    if isdirectory(expand("~/.vim/bundle/tagbar/"))
         " 相对 TagList 能更好的支持面向对象
 
         " 常规模式下输入 tb 调用插件，如果有打开 TagList 窗口则先将其关闭
         "nmap tb :TlistClose<CR>:TagbarToggle<CR>
 
         let g:tagbar_width=20                       "设置窗口宽度
-        let g:tagbar_left=1                         "在左侧窗口中显示
+        let g:tagbar_left=0                         "在左侧窗口中显示
         let g:tagbar_compact=1                      "不显示帮助信息
-        let g:winManagerWindowLayout = "TagList|FileExplorer,BufExplorer"
+        "tagbar_map_togglefold 打开tagbar变量  "o"
+
+        let g:tagbar_type_python = {
+            \ 'kinds' : [
+                \ 'i:imports:1:0',
+                \ 'c:classes',
+                \ 'f:functions',
+                \ 'm:members',
+                \ 'v:variables:0:0',
+            \ ],
+        \ }
+        let g:tagbar_type_c = {
+            \ 'kinds' : [
+                \ 'd:macros:1:0',
+                \ 'p:prototypes:1:0',
+                \ 'g:enums',
+                \ 'e:enumerators:0:0',
+                \ 't:typedefs:0:0',
+                \ 's:structs',
+                \ 'u:unions',
+                \ 'm:members:0:0',
+                \ 'v:variables:0:0',
+                \ 'f:functions',
+            \ ],
+        \ }
+        " let g:winManagerWindowLayout = "TagList|FileExplorer,BufExplorer"
         "let g:winManagerWindowLayout = "TagList|Tagbar"
     endif
     " }
@@ -488,7 +511,8 @@
             let NERDTreeQuitOnOpen=1
             let NERDTreeMouseMode=2
             let NERDTreeKeepTreeInNewTab=1
-            let NERDTreeWinPos="right"
+            let NERDTreeWinSize=22
+            let NERDTreeWinPos="left"
             "高亮显示当前文件或目录
             let NERDTreeHightCursorline=1
             "不显示'Bookmarks' label 'Press ? for help'
@@ -513,31 +537,31 @@
     " }
     " cscope {
         " 用Cscope自己的话说 你可以把它当做是超过频的ctags
-        if has("cscope")
-            "设定可以使用 quickfix 窗口来查看 cscope 结果
-            set cscopequickfix=s-,c-,d-,i-,t-,e-
-            "使支持用 Ctrl+]  和 Ctrl+t 快捷键在代码间跳转
-            set cscopetag
-            "如果你想反向搜索顺序设置为1
-            set csto=0
-            "在当前目录中添加任何数据库
-            if filereadable("cscope.out")
-                cs add cscope.out
-                "否则添加数据库环境中所指出的
-            elseif $CSCOPE_DB != ""
-                cs add $CSCOPE_DB
-            endif
-            set cscopeverbose
-            "快捷键设置
-            nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-            nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-            nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-            nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-            nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-            nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-            nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-            nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-        endif
+    "    if has("cscope")
+            ""设定可以使用 quickfix 窗口来查看 cscope 结果
+            "set cscopequickfix=s-,c-,d-,i-,t-,e-
+            ""使支持用 Ctrl+]  和 Ctrl+t 快捷键在代码间跳转
+            "set cscopetag
+            ""如果你想反向搜索顺序设置为1
+            "set csto=0
+            ""在当前目录中添加任何数据库
+            "if filereadable("cscope.out")
+                "cs add cscope.out
+                ""否则添加数据库环境中所指出的
+            "elseif $CSCOPE_DB != ""
+                "cs add $CSCOPE_DB
+            "endif
+            "set cscopeverbose
+            ""快捷键设置
+            "nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+            "nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+            "nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+            "nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+            "nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+            "nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+            "nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+            "nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+        "endif
     " }
   " Tabularize {
         if isdirectory(expand("~/.vim/bundle/tabular"))
@@ -565,18 +589,6 @@
         "" buffer 切换快捷键
         "map <C-Tab> :MBEbn<cr>
         "map <C-S-Tab> :MBEbp<cr>
-    " }
-    " ctrlp {
-"        let g:ctrlp_working_path_mode = 'ra'
-"        let g:ctrlp_custom_ignore = {
-"                \ 'dir':  '\.git$\|\.hg$\|\.svn$',
-"                \ 'file': '\.exe$\|\.so$\|\.dll$\|\.pyc$' }
-"        let g:ctrlp_working_path_mode=0
-"        let g:ctrlp_match_window_bottom=1
-"        let g:ctrlp_max_height=15
-"        let g:ctrlp_match_window_reversed=0
-"        let g:ctrlp_mruf_max=500
-"        let g:ctrlp_follow_symlinks=1
     " }
     " ctrlp {
         if isdirectory(expand("~/.vim/bundle/ctrlp.vim/"))
@@ -679,16 +691,17 @@
         if isdirectory(expand("~/.vim/bundle/python-mode"))
             let g:pymode_lint_checkers = ['pyflakes']
             let g:pymode_trim_whitespaces = 0
+"            let g:pymode_lint_on_fly = 1
             let g:pymode_options = 0
             let g:pymode_rope = 0
         endif
     " }
     " python语法实时检查 {
         " python fly check, 弥补syntastic只能打开和保存才检查语法的不足
-        let g:pyflakes_use_quickfix = 1
+        "let g:pyflakes_use_quickfix = 0
 
         " for python.vim syntax highlight
-        let python_highlight_all = 1
+        " let python_highlight_all = 1
     " }
 " }
 " PHP {
@@ -768,8 +781,10 @@
 
     if has("gui_running")
         set background=dark
-        let g:solarized_termcolors=256
-        colorscheme solarized
+        "let g:solarized_termcolors=256
+        "colorscheme solarized
+        let g:molokai_original = 1
+        colorscheme molokai
     elseif $TERM=~'cons25'
         colorscheme default
     else
@@ -813,7 +828,7 @@
 
     set cursorline                  "高亮光标所在行
     set cuc                         "高亮光标所在列
-    set colorcolumn=80
+    " set colorcolumn=80
     highlight clear SignColumn      " SignColumn should match background
     highlight clear LineNr          " Current line number row will have same background color in relative mode
     "highlight clear CursorLineNr    " Remove highlight color from current line number
@@ -829,9 +844,9 @@
          set laststatus=2                         "启用状态栏信息
          set statusline=%<%f\                     " Filename
          set statusline+=%w%h%m%r                 " Options
-         if !exists('g:override_bundles')
-            set statusline+=%{fugitive#statusline()} " Git Hotness
-         endif
+       "  if !exists('g:override_bundles')
+            "set statusline+=%{fugitive#statusline()} " Git Hotness
+         "endif
          set statusline+=\ [%{&ff}/%Y]            " Filetype
          set statusline+=\ [%{getcwd()}]          " Current dir
          set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
@@ -907,11 +922,11 @@
     "set showtabline=1              "显示标签
     set smarttab                   "指定按一次backspace就删除shiftwidth宽度
     "set foldmethod=indent          "indent 折叠方式
-    set foldmethod=syntax
-    set foldenable                  "启用折叠
-    "set foldmethod=marker
+    "set foldmethod=syntax
+    "set foldenable                  "启用折叠
+    set foldmethod=marker
     " 启动 vim 时关闭折叠代码
-    "set nofoldenable
+    set nofoldenable
     "set matchtime=5                "匹配括号高亮的时间（单位是十分之一秒）
     "set autoread                   "当文件在外部被修改，自动更新该文件
     "set autowrite                  "自动保存
@@ -952,6 +967,7 @@
     "==========================================
     " others 其它设置
     "==========================================
+    let g:clang_user_options='|| exit 0'
     autocmd! bufwritepost _vimrc source % " vimrc文件修改之后自动加载。 windows。
     autocmd! bufwritepost .vimrc source % " vimrc文件修改之后自动加载。 linux。
 
@@ -973,7 +989,7 @@
         %s/\s\+$//e
         call cursor(l, c)
     endfun
-    autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+    autocmd filetype c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 
     "设置标记一列的背景颜色和数字一行颜色一致
     hi! link SignColumn   LineNr
@@ -1028,74 +1044,75 @@
     " ======================================================================================
     "                插入文件标题
     " ======================================================================================
-    "新建.c,.h,.sh,.java文件，自动插入文件头 
-    autocmd BufNewFile *.cpp,*.[ch],*.sh,*.rb,*.java,*.py,*md exec ":call SetTitle()" 
-    ""定义函数SetTitle，自动插入文件头 
+    autocmd BufNewFile *.cpp,*.[ch],*.sh,*.rb,*.py,*.asm,*md,*.html,*.xml,*.xhtml exec ":call SetTitle()" 
     func! SetTitle() 
         "如果文件类型为.sh文件 
         if &filetype == 'sh' 
             call setline(1,"\#!/bin/bash") 
             call append(line("."), "") 
-        elseif &filetype == 'python'
-            call setline(1, "#!/usr/bin/env python")
-            call append(line("."), "# -*- coding=UTF-8 -*-")
-            call append(line(".")+1, "#*************************************************************************") 
-            call append(line(".")+2, "#   File Name: ".expand("%")) 
-            call append(line(".")+3, "#   Author:JiangLin ") 
-            call append(line(".")+4, "#   Mail:xiyang0807@163.com ") 
-            call append(line(".")+5, "#   Created Time: ".strftime("%c")) 
-            call append(line(".")+6, "#*************************************************************************")
-            call append(line(".")+7, "") 
-
-        elseif &filetype == 'ruby'
-            call setline(1,"#!/usr/bin/env ruby")
-            call append(line("."),"# encoding: utf-8")
-            call append(line(".")+1, "")
-        endif
-        if expand("%:e") == 'cpp'
-            call setline(1, "/**************************************************************************") 
-            call append(line("."), "   File Name: ".expand("%")) 
-            call append(line(".")+1, "   Author:JiangLin ") 
-            call append(line(".")+2, "   Mail:xiyang0807@163.com ") 
-            call append(line(".")+3, "   Created Time: ".strftime("%c")) 
-            call append(line(".")+4, "**************************************************************************/")
-            call append(line(".")+5, "#include<iostream>")
-            call append(line(".")+6, "using namespace std;")
-            call append(line(".")+7, "")
-        endif
-        if &filetype == 'c'
-            call setline(1, "/**************************************************************************") 
-            call append(line("."), "   File Name: ".expand("%")) 
-            call append(line(".")+1, "   Author:JiangLin ") 
-            call append(line(".")+2, "   Mail:xiyang0807@163.com ") 
-            call append(line(".")+3, "   Created Time: ".strftime("%c")) 
-            call append(line(".")+4, "**************************************************************************/")
-            call append(line(".")+5, "#include<stdio.h>")
-            call append(line(".")+6, "#include<string.h>")
-            call append(line(".")+7, "")
-        endif
-        if expand("%:e") == 'h'
-            call setline(1, "/**************************************************************************") 
-            call append(line("."), "   File Name: ".expand("%")) 
-            call append(line(".")+1, "   Author:JiangLin ") 
-            call append(line(".")+2, "   Mail:xiyang0807@163.com ") 
-            call append(line(".")+3, "   Created Time: ".strftime("%c")) 
-            call append(line(".")+4, "**************************************************************************/")
-            call append(line(".")+5, "#ifndef _".toupper(expand("%:r"))."_H")
-            call append(line(".")+6, "#define _".toupper(expand("%:r"))."_H")
-            call append(line(".")+7, "#endif")
-        endif
-        if &filetype == 'mkd'
-            call setline(1,"TITLE: ")
-            call append(line("."), "Author:honmaple ") 
+        elseif &filetype == 'mkd'
+            call setline(1,          "TITLE: ")
+            call append(line("."),   "Author:honmaple ") 
             call append(line(".")+1, "Date: ".strftime("%F %R")) 
             call append(line(".")+2, "Category: ") 
             call append(line(".")+3, "Tags: ") 
-            call append(line(".")+4, "Slug: ") 
+            call append(line(".")+4, "Slug:".expand("%")) 
             call append(line(".")+5, "Summary: ") 
             call append(line(".")+6, "")
+        elseif &filetype == 'python' || &filetype == 'ruby'
+            call setline(1,          "#*************************************************************************") 
+            call append(line("."),   "#   Copyright © 2015 JiangLin. All rights reserved.") 
+            call append(line(".")+1, "#   File Name: ".expand("%")) 
+            call append(line(".")+2, "#   Author:JiangLin ") 
+            call append(line(".")+3, "#   Mail:xiyang0807@gmail.com ") 
+            call append(line(".")+4, "#   Created Time: ".strftime("%F %T")) 
+            call append(line(".")+5, "#*************************************************************************")
+            if &filetype == 'python'
+                call append(line(".")+6,"#!/usr/bin/env python")
+                call append(line(".")+7,"# -*- coding=UTF-8 -*-")
+                call append(line(".")+8,"") 
+            elseif &filetype == 'ruby'
+                call append(line(".")+6,"#!/usr/bin/env ruby")
+                call append(line(".")+7,"# encoding: utf-8")
+                call append(line(".")+8,"")
+            endif
         endif
-        "新建文件后，自动定位到文件末尾
+
+        if expand("%:e") == 'cpp' ||expand("%:e") == 'c' ||expand("%:e") == "h" ||expand("%:e") == 'asm'
+            call setline(1,          "/**************************************************************************") 
+            call append(line("."),   "   Copyright © 2015 JiangLin. All rights reserved.") 
+            call append(line(".")+1, "   File Name: ".expand("%")) 
+            call append(line(".")+2, "   Author:JiangLin ") 
+            call append(line(".")+3, "   Mail:xiyang0807@gmail.com ") 
+            call append(line(".")+4, "   Created Time: ".strftime("%F %T")) 
+            call append(line(".")+5, "**************************************************************************/")
+            if expand("%:e") == 'h'
+                call append(line(".")+6, "#ifndef _".toupper(expand("%:r"))."_H")
+                call append(line(".")+7, "#define _".toupper(expand("%:r"))."_H")
+                call append(line(".")+8, "#endif")
+                call append(line(".")+9, "")
+            elseif expand("%:e") == 'c'
+                call append(line(".")+6, "#include<stdio.h>")
+                call append(line(".")+7, "#include<string.h>")
+                call append(line(".")+8, "")
+            elseif expand("%:e") == 'cpp'
+                call append(line(".")+6, "#include<iostream>")
+                call append(line(".")+7, "using namespace std;")
+                call append(line(".")+8, "")
+            elseif expand("%:e") == 'asm'
+                call append(line(".")+6, "")
+            endif
+        elseif expand("%:e") == 'html' || expand("%:e") == 'xml' ||  expand("%:e") == 'xhtml'
+            call setline(1, "<!--")
+            call append(line("."),   "  Copyright © 2015 JiangLin. All rights reserved.") 
+            call append(line(".")+1, "  File Name: ".expand("%")) 
+            call append(line(".")+2, "  Author:JiangLin ") 
+            call append(line(".")+3, "  Mail:xiyang0807@gmail.com ") 
+            call append(line(".")+4, "  Created Time: ".strftime("%F %T")) 
+            call append(line(".")+5, "-->")
+            call append(line(".")+6, "")
+        endif
+                "新建文件后，自动定位到文件末尾
     endfunc 
     autocmd BufNewFile * normal G
 " }
@@ -1327,7 +1344,7 @@
         exec ":w"
         if &filetype == 'html'
             exe ":!google-chrome-stable %"
-        elseif &filetype == 'py'
+        elseif &filetype == 'python'
             exe ":!python %"
         elseif &filetype == 'c'
             exe ":!gcc\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o"
@@ -1438,15 +1455,8 @@
     " 常规模式下输入 tl 调用插件，如果有打开 Tagbar 窗口则先将其关闭
     nmap tl :TagbarClose<CR>:Tlist<CR>
     "切换buffer
-    nmap b1 :b1<CR>
-    nmap b2 :b2<CR>
-    nmap b3 :b3<CR>
-    nmap b4 :b4<CR>
-    nmap b5 :b5<CR>
-    nmap b6 :b6<CR>
-    nmap b7 :b7<CR>
-    nmap b8 :b8<CR>
-    nmap b9 :b9<CR>
+    nmap <Tab> :bn<CR>
+    nmap <S-Tab> :tabn<CR>
     "C，C++ 按F5编译运行
     map <F5> :call Run()<CR>
     map <F8> :call RunPython()<CR>
